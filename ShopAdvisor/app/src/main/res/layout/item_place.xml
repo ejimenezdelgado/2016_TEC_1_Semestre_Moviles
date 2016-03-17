@@ -6,7 +6,7 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="79dp"
-        android:background="#ffff660d"
+        android:background="#C9F4C9"
         android:id="@+id/layoutListaFormato">
 
 

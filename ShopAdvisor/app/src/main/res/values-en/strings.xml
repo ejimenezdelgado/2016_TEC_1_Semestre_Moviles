@@ -10,4 +10,5 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hola estoy vacio</string>
+    <string name="always_connect">Always connect</string>
 </resources>
