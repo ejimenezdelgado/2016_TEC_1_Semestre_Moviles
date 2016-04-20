@@ -19,11 +19,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+
 public class DashboardActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         TestFragment.OnFragmentInteractionListener,
         AboutFragment.OnFragmentInteractionListener,
-        WebViewFragment.OnFragmentInteractionListener{
+        WebViewFragment.OnFragmentInteractionListener,
+        CreatePlaceFragment.OnFragmentInteractionListener,
+        AudioFragment.OnFragmentInteractionListener,
+        CamaraFragment.OnFragmentInteractionListener{
 
     public void aceptar() {
         Toast t=Toast.makeText(this,"Bienvenido a probar el programa.", Toast.LENGTH_SHORT);
@@ -42,7 +46,7 @@ public class DashboardActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
 
-        AlertDialog.Builder dialogo1 = new AlertDialog.Builder(this);
+       /* AlertDialog.Builder dialogo1 = new AlertDialog.Builder(this);
         dialogo1.setTitle("Importante");
         dialogo1.setMessage("¿ Acepta la ejecución de este programa en modo prueba ?");
         dialogo1.setCancelable(false);
@@ -65,7 +69,7 @@ public class DashboardActivity extends AppCompatActivity
                 cancelar();
             }
         });
-        dialogo1.show();
+        dialogo1.show();*/
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +129,25 @@ public class DashboardActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
+            Fragment fragment = new CreatePlaceFragment();
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_dashboard, fragment).commit();
+
+
+            /*
+            * PlaceRepository placeRepository=new PlaceRepository(this);
+            //placeRepository.GetAll();
+            /*Place place=new Place();
+            place.setId(1);
+            place.setName("Test");
+            placeRepository.Save(place);*/
+/*
+            Place place=new Place();
+            place.setId(1);
+            place.setName("Test1");
+            placeRepository.Update(place);*/
+
+
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
             Fragment fragment = new TestFragment();
@@ -132,8 +155,14 @@ public class DashboardActivity extends AppCompatActivity
           getSupportFragmentManager().beginTransaction().replace(R.id.content_dashboard, fragment).commit();
 
         } else if (id == R.id.nav_slideshow) {
+            Fragment fragment = new AudioFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_dashboard, fragment).commit();
 
         } else if (id == R.id.nav_manage) {
+
+            Fragment fragment = new CamaraFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_dashboard, fragment).commit();
+
 
         } else if (id == R.id.nav_share) {
             Fragment fragment = new WebViewFragment();
