@@ -11,4 +11,5 @@
     <string name="hello_blank_fragment">Im empty</string>
 
     <string name="always_connect">Always connect</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

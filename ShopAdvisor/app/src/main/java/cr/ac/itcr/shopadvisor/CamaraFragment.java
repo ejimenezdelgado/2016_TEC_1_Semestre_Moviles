@@ -155,15 +155,17 @@ public class CamaraFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == -1) {
-            Intent mediaScanIntent =
-                    new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
-            File f = new File(path);
-            Uri contentUri = Uri.fromFile(f.getAbsoluteFile());
-            mediaScanIntent.setData(contentUri);
-            getActivity().sendBroadcast(mediaScanIntent);
-        }
 
+        if(requestCode==1) {
+            if (resultCode == -1) {
+                Intent mediaScanIntent =
+                        new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
+                File f = new File(path);
+                Uri contentUri = Uri.fromFile(f.getAbsoluteFile());
+                mediaScanIntent.setData(contentUri);
+                getActivity().sendBroadcast(mediaScanIntent);
+            }
+        }
     }
 
 

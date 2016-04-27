@@ -1,34 +1,28 @@
 package cr.ac.itcr.shopadvisor;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.CallLog;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import cr.ac.itcr.shopadvisor.access_data.IRepository;
-import cr.ac.itcr.shopadvisor.access_data.PlaceRepository;
-import cr.ac.itcr.shopadvisor.entity.Place;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CreatePlaceFragment.OnFragmentInteractionListener} interface
+ * {@link ContentFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link CreatePlaceFragment#newInstance} factory method to
+ * Use the {@link ContentFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CreatePlaceFragment extends Fragment {
+public class ContentFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -38,12 +32,11 @@ public class CreatePlaceFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private static TextView txtContactos;
+
     private OnFragmentInteractionListener mListener;
 
-    private static Button addButton;
-    private static EditText name;
-
-    public CreatePlaceFragment() {
+    public ContentFragment() {
         // Required empty public constructor
     }
 
@@ -53,11 +46,11 @@ public class CreatePlaceFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment CreatePlaceFragment.
+     * @return A new instance of fragment ContentFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CreatePlaceFragment newInstance(String param1, String param2) {
-        CreatePlaceFragment fragment = new CreatePlaceFragment();
+    public static ContentFragment newInstance(String param1, String param2) {
+        ContentFragment fragment = new ContentFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -77,43 +70,10 @@ public class CreatePlaceFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        View view =inflater.inflate(R.layout.fragment_create_place, container, false);
-
-        addButton = (Button)  view.findViewById(R.id.btnAdd);
-        name=(EditText)view.findViewById(R.id.txtName);
-        addButton.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v) {
-                IRepository repository=new PlaceRepository(getContext().getApplicationContext());
-                Place place=new Place();
-                place.setName(name.getText().toString());
-                repository.Save(place);
-                ArrayList<Place> test=repository.GetAll();
-            }
-
-           /* public void onClick(View v)
-            {
-                TextView name=(TextView)v.findViewById(R.id.txtName);
-                if(name.getText().toString().equals(""))
-                {
-                   /* Toast.makeText(getContext().getApplicationContext(), "The field name is empty"
-                            , Toast.LENGTH_SHORT).show();*/
-           /*     }
-                else {
-                    IRepository repository=new PlaceRepository(getContext().getApplicationContext());
-                    Place place=new Place();
-                    place.setName(name.getText().toString());
-                    repository.Save(place);
-                    ArrayList<Place> test=repository.GetAll();
-
-                }*/
-            //}
-        });
-
-
-        // Inflate the layout for this fragment
+        View view =inflater.inflate(R.layout.fragment_content, container, false);
+        txtContactos= (TextView) view.findViewById(R.id.txtContactos);
+       // this.ObtenerDatos();
+        this.ObtenerLlamadas();
         return view;
     }
 
@@ -154,5 +114,64 @@ public class CreatePlaceFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void ObtenerLlamadas(){
+
+        Uri uri;
+        uri = Uri.parse("content://call_log/calls");
+
+        String[] projeccion = new String[]{
+                CallLog.Calls.TYPE,
+                CallLog.Calls.NUMBER,
+                CallLog.Calls.DURATION};
+
+        Cursor llamadas =  getActivity().getContentResolver().query(
+                uri,
+                projeccion,
+                null,
+                null,
+                null);
+
+        while(llamadas.moveToNext()){
+            txtContactos.append("Tipo: " +
+                    llamadas.getString(0) + " Número: " +
+                    llamadas.getString(1) + " Duración: " +
+                    llamadas.getString(2) +"\n");
+
+        }
+        llamadas.close();
+    }
+
+    public void ObtenerDatos(){
+
+        String[] projeccion = new String[] {
+                ContactsContract.Data._ID,
+                ContactsContract.Data.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.Phone.NUMBER,
+                ContactsContract.CommonDataKinds.Phone.TYPE };
+
+        String selectionClause = ContactsContract.Data.MIMETYPE + "='" +
+                ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE + "' AND "
+                + ContactsContract.CommonDataKinds.Phone.NUMBER + " IS NOT NULL";
+
+        String sortOrder = ContactsContract.Data.DISPLAY_NAME + " ASC";
+
+
+        Cursor contactos = getActivity().getContentResolver().query(
+                ContactsContract.Data.CONTENT_URI,
+                projeccion,
+                selectionClause,
+                null,
+                sortOrder);
+
+        while(contactos.moveToNext()){
+            txtContactos.append("Identificador: " +
+                    contactos.getString(0) + " Nombre: " +
+                    contactos.getString(1) + " Número: " +
+                    contactos.getString(2)+  " Tipo: " +
+                    contactos.getString(3)+"\n");
+        }
+        contactos.close();
     }
 }

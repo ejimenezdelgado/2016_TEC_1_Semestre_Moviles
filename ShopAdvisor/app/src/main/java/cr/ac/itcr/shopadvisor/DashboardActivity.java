@@ -1,6 +1,7 @@
 package cr.ac.itcr.shopadvisor;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -27,7 +28,8 @@ public class DashboardActivity extends AppCompatActivity
         WebViewFragment.OnFragmentInteractionListener,
         CreatePlaceFragment.OnFragmentInteractionListener,
         AudioFragment.OnFragmentInteractionListener,
-        CamaraFragment.OnFragmentInteractionListener{
+        CamaraFragment.OnFragmentInteractionListener,
+        ContentFragment.OnFragmentInteractionListener{
 
     public void aceptar() {
         Toast t=Toast.makeText(this,"Bienvenido a probar el programa.", Toast.LENGTH_SHORT);
@@ -128,12 +130,14 @@ public class DashboardActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        if (id == R.id.map) {
+            Intent i = new Intent(getApplicationContext(),MapsActivity.class);;
+            startActivity(i);
+        }
+
         if (id == R.id.nav_camera) {
             Fragment fragment = new CreatePlaceFragment();
-
             getSupportFragmentManager().beginTransaction().replace(R.id.content_dashboard, fragment).commit();
-
-
             /*
             * PlaceRepository placeRepository=new PlaceRepository(this);
             //placeRepository.GetAll();
@@ -151,7 +155,6 @@ public class DashboardActivity extends AppCompatActivity
             // Handle the camera action
         } else if (id == R.id.nav_gallery) {
             Fragment fragment = new TestFragment();
-
           getSupportFragmentManager().beginTransaction().replace(R.id.content_dashboard, fragment).commit();
 
         } else if (id == R.id.nav_slideshow) {
@@ -159,17 +162,18 @@ public class DashboardActivity extends AppCompatActivity
             getSupportFragmentManager().beginTransaction().replace(R.id.content_dashboard, fragment).commit();
 
         } else if (id == R.id.nav_manage) {
-
             Fragment fragment = new CamaraFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.content_dashboard, fragment).commit();
-
 
         } else if (id == R.id.nav_share) {
             Fragment fragment = new WebViewFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.content_dashboard, fragment).commit();
         } else if (id == R.id.nav_send) {
-            Fragment fragment = new AboutFragment();
+           /* Fragment fragment = new AboutFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.content_dashboard, fragment).commit();*/
+            Fragment fragment = new ContentFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.content_dashboard, fragment).commit();
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
