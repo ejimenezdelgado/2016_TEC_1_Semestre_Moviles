@@ -79,10 +79,6 @@ public class TestFragment extends Fragment {
         PlaceRepository placeRepository=new PlaceRepository(getActivity().getApplicationContext());
         adapter = new AdapterPlace(getActivity().getApplicationContext(),placeRepository.GetAll());
         lista.setAdapter(adapter);
-
-        // Inflate the layout for this fragment
-        //return inflater.inflate(R.layout.fragment_test, container, false);
-
         return view;
     }
 

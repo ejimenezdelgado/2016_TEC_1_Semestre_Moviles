@@ -11,6 +11,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
+import java.util.concurrent.ExecutionException;
+
+import cr.ac.itcr.shopadvisor.api.PlaceApi;
+
 public class LoginActivity extends AppCompatActivity {
 
     private Button btnLogin;
@@ -24,6 +28,15 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        PlaceApi sdd=new PlaceApi();
+        try {
+            sdd.GetAll();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
 
         SharedPreferences preferencias = getSharedPreferences("ShopAdvisor", Context.MODE_PRIVATE);

@@ -10,6 +10,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -29,8 +30,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 
 
-
-
 public class MapsActivity extends FragmentActivity
         implements OnMapReadyCallback,View.OnClickListener {
 
@@ -40,16 +39,8 @@ public class MapsActivity extends FragmentActivity
     Button bhibrido;
     Button binterior;
 
-
-
-
-
-
-
-
-
-    TextView latitud;
-    TextView longitud;
+    //TextView latitud;
+    //TextView longitud;
     Location location;
     LocationManager locationManager;
     LocationListener locationListener;
@@ -78,8 +69,8 @@ public class MapsActivity extends FragmentActivity
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        latitud = (TextView) findViewById(R.id.latitud);
-        longitud = (TextView) findViewById(R.id.longitud);
+        //latitud = (TextView) findViewById(R.id.latitud);
+        //longitud = (TextView) findViewById(R.id.longitud);
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -96,16 +87,20 @@ public class MapsActivity extends FragmentActivity
 
                 return;
             } else {
-                location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                //location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                Criteria criteria = new Criteria();
+                criteria.setAccuracy(Criteria.ACCURACY_FINE);
+                String mejorProveedor=locationManager.getBestProvider(criteria,true);
+                location = locationManager.getLastKnownLocation(mejorProveedor);
             }
         } else {
-            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        }
+            //location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-        String mejorProveedor=locationManager.getBestProvider(criteria,true);
-        location = locationManager.getLastKnownLocation(mejorProveedor);
+            Criteria criteria = new Criteria();
+            criteria.setAccuracy(Criteria.ACCURACY_FINE);
+            String mejorProveedor=locationManager.getBestProvider(criteria,true);
+            location = locationManager.getLastKnownLocation(mejorProveedor);
+        }
 
         MostrarLocalizacion(location);
 
@@ -131,7 +126,11 @@ public class MapsActivity extends FragmentActivity
             }
         };
 
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+        String mejorProveedor=locationManager.getBestProvider(criteria,true);
+
+        locationManager.requestLocationUpdates(mejorProveedor,1000,1,locationListener);
     }
 
     private void AlertNoGps() {
@@ -195,62 +194,34 @@ public class MapsActivity extends FragmentActivity
     }
 
 
+
+
     public void MostrarLocalizacion(Location loc){
         if (loc!=null){
-            latitud.setText((int) loc.getLatitude());
-            longitud.setText((int) loc.getLongitude());
+
+            //latitud.setText(loc.getLatitude() + "");
+            //longitud.setText(loc.getLongitude() + "");
+            LatLng tec = new LatLng(loc.getLatitude(),loc.getLongitude());
+
+            String coordenadas = "Se ha movido a: " + "Latitud = " + loc.getLatitude() + "Longitud = " + loc.getLongitude();
+            Toast.makeText( getApplicationContext(),coordenadas,Toast.LENGTH_LONG).show();
+
+            if(mMap!=null)
+                mMap.addMarker(new MarkerOptions().position(tec).title("Marcas"));
+
             //hiloconexion = new ObtenerWebService();
            // hiloconexion.execute(String.valueOf(loc.getLatitude()),String.valueOf(loc.getLongitude()));
         }
         else
         {
-            latitud.setText("Latitud: (sin_datos)");
-            longitud.setText("Longitud: (sin_datos)");
+            //latitud.setText("Latitud: (sin_datos)");
+            //longitud.setText("Longitud: (sin_datos)");
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+       /* switch (v.getId()){
             case R.id.bmapa:
                 mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
                 break;
@@ -268,7 +239,7 @@ public class MapsActivity extends FragmentActivity
                 break;
             default:
                 break;
-        }
+        }*/
     }
 
     /**
@@ -309,6 +280,5 @@ public class MapsActivity extends FragmentActivity
                 return false;
             }
         });
-
     }
 }

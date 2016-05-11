@@ -9,6 +9,7 @@ import java.util.ArrayList;
  */
 public interface IRepository<Object> {
 
+
     public boolean Save(Object object);
 
     public boolean Update(Object object);
@@ -18,5 +19,4 @@ public interface IRepository<Object> {
     public ArrayList<Object> GetAll();
 
     public ArrayList<Object> GetBy(Object object);
-
 }
