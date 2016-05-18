@@ -14,6 +14,7 @@ import android.widget.EditText;
 import java.util.concurrent.ExecutionException;
 
 import cr.ac.itcr.shopadvisor.api.PlaceApi;
+import cr.ac.itcr.shopadvisor.entity.Place;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -32,6 +33,9 @@ public class LoginActivity extends AppCompatActivity {
         PlaceApi sdd=new PlaceApi();
         try {
             sdd.GetAll();
+            Place place =new Place();
+            place.setName("Prueba andriod");
+            sdd.Save(place);
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {

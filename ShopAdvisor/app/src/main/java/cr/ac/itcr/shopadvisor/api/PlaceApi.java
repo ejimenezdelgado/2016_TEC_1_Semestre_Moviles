@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -28,6 +29,19 @@ public class PlaceApi implements IApi<Place> {
 
     @Override
     public boolean Save(Place place) {
+        PlaceApiPost s=new PlaceApiPost();
+        s.execute(ConstantApi.url,ConstantApi.post,place.getName());
+        try {
+
+            if(s.get()!=null)
+                return true;
+            else
+                return false;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
         return false;
     }
 
@@ -60,7 +74,6 @@ public class PlaceApi implements IApi<Place> {
     public ArrayList<Place> GetBy(Place place) {
         return null;
     }
-
 
     public class PlaceApiGet extends AsyncTask<String,Void,ArrayList<Place>> {
 
@@ -124,6 +137,78 @@ public class PlaceApi implements IApi<Place> {
             }
 
             return places;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+        }
+    }
+
+    public class PlaceApiPost extends AsyncTask<String,Void,Place> {
+
+        @Override
+        protected Place doInBackground(String... params) {
+
+            String cadena = params[0];
+            URL url = null; // Url de donde queremos obtener información
+            String devuelve = "";
+            Place placenew = new Place();
+            try {
+                if (params[1] == ConstantApi.post) {
+                    url = new URL(cadena);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection(); //Abrir la conexión
+                    connection.setRequestProperty("User-Agent", "Mozilla/5.0" +
+                            " (Linux; Android 1.5; es-ES) Ejemplo HTTP");
+                    connection.setRequestMethod("POST");
+                    connection.setRequestProperty("Content-Type", "application/json");
+                    connection.setRequestProperty("Accept", "application/json");
+                    /**************************/
+                    JSONObject place = new JSONObject();
+                    place.put("name", params[2].toString());
+                    place.put("latitude", "0");
+                    place.put("longitude", "0");
+                    OutputStreamWriter wr =
+                            new OutputStreamWriter(connection.getOutputStream());
+                    wr.write(place.toString());
+                    wr.flush();
+                    /************************/
+                    int respuesta = connection.getResponseCode();
+                    StringBuilder result = new StringBuilder();
+
+                    if (respuesta == HttpURLConnection.HTTP_OK) {
+
+                        InputStream in = new BufferedInputStream(connection.getInputStream());  // preparo la cadena de entrada
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(in));  // la introduzco en un BufferedReader
+
+                        // El siguiente proceso lo hago porque el JSONOBject necesita un String y tengo
+                        // que tranformar el BufferedReader a String. Esto lo hago a traves de un
+                        // StringBuilder.
+
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            result.append(line);        // Paso toda la entrada al StringBuilder
+                        }
+
+                        //Creamos un objeto JSONObject para poder acceder a los atributos (campos) del objeto.
+                        JSONObject jsonRootObject = new JSONObject(result.toString());   //Creo un JSONObject a partir del StringBuilder pasado a cadena
+                        placenew.setId(jsonRootObject.getInt("id"));
+                        placenew.setName(jsonRootObject.getString("name"));
+                    }
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return placenew;
         }
 
         @Override
